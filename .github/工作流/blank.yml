@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>心动崽崽</title>
+		<meta name="viewport"
+			content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<script src="js/jquery-3.2.1.js"></script>
+	</head>
+	<body>
+		<!-- 开场 -->
+		<div class="cover">
+			<div class="cover-text">送给我的大媳妇</div>
+			<div class="cover-name">你的大傻宝</div>
+		</div>
+		<!-- 图片列表 -->
+		<div class="box">
+			<img src="images/0.jpg" />
+			<img src="images/1.jpg" />
+			<img src="images/2.jpg" />
+			<img src="images/3.jpg" />
+			<img src="images/4.jpg" />
+			<img src="images/5.jpg" />
+			<img src="images/6.jpg" />
+			<img src="images/7.jpg" />
+			<img src="images/8.jpg" />
+		</div>
+		<!-- 结束 -->
+		<div class="end">
+			<div class="end-text">心动送给我的大媳妇</div>
+			<div class="end-name">爱你呦</div>
+		</div>
+	</body>
+	<!-- <script src="js/api.js"></script> -->
+	<script>
+		$(document).ready(function() {
+
+			function startApp(obj) {
+				var elem = $(obj.elem).find("img") || $("img"),
+					time = obj.time || 5000,
+					len = elem.length,
+					mp3 = obj.mp3 || "mp3/music.mp3",
+					audio = $('<audio src="' + mp3 + '" autoplay="autoplay" loop="loop"></audio>');
+				elem.hide(0);
+				$("body").append(audio);
+				setTimeout(function() {
+					$(".cover").slideUp(time / 2);
+				}, time / 2);
+				for (var i = 0; i < len; i++) {
+					(function(i) {
+						setTimeout(function() {
+							var el = elem.eq(i),
+								input = $('<input type="hide">'),
+								width = elem.width(),
+								height = elem.height(),
+								box = $('<div></div>');
+							box.width(width).height(height).css({
+								position: "relative",
+								display: "inline-block",
+								marginBottom: "5vh"
+							});
+							el.after(box).after(input);
+							input.focus().remove();
+							this.render(box, el, i);
+						}, (i + 1) * time);
+					})(i);
+				}
+				this.render = function(box, el, index) {
+					var width = elem.width(),
+						height = elem.height(),
+						line = this.rand(5, 30),
+						row = this.rand(5, 30),
+						w = width / row,
+						h = height / line,
+						url = el.attr("src"),
+						ww = $(document).width() - w,
+						wh = $(document).height() - h,
+						time = this.rand(2000, 3500);
+					for (var i = 0; i < row; i++) {
+						for (var x = 0; x < line; x++) {
+							var left = i * w,
+								top = x * h,
+								dw = Math.random() * ww,
+								dh = Math.random() * wh,
+								radius = this.rand(0, 100),
+								node = $('<div style="position: absolute;width: ' + w +
+									'px;height: ' + h + 'px;top: ' + dh + 'px;left: ' + dw +
+									'px;background-image: url(' + url + ');background-size:' + width + 'px ' +
+									height +
+									'px;background-position: -' + left + 'px -' + top +
+									'px;border-radius: ' + radius + '%;" data-i="' + i + '" data-x="' +
+									x + '"></div>');
+							box.append(node);
+							node.animate({
+								left: left,
+								top: top
+							}, time, function() {
+								var ei = $(this).attr("data-i");
+								var ex = $(this).attr("data-x");
+								if (ei == row - 1 && ex == line - 1) {
+									box.remove();
+									el.show(0);
+									if (index == len - 1) {
+										obj.end && obj.end();
+									}
+								}
+							});
+						}
+					}
+				}
+				this.rand = function(min, max) {
+					return Math.floor(Math.random() * (max - min + 1) + min);
+				}
+			}
+
+			//在这里设置参数
+			startApp({
+				elem: ".box",
+				time: 5000,
+				mp3: "mp3/music.mp3",
+				end: function() {
+					$(".end").show(3000);
+				}
+			});
+		});
+	</script>
+</html>
